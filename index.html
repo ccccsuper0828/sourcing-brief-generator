@@ -118,7 +118,12 @@ input[type=text]::placeholder{color:var(--ink-4)}
 .bh{border-top:2px solid var(--ink);padding-top:16px;margin-bottom:22px}
 .bh .t{font-size:24px;font-weight:680;letter-spacing:-.016em;margin:0 0 6px;text-wrap:balance}
 .bh .m{font-family:var(--mono);font-size:11px;color:var(--ink-3);letter-spacing:.04em;
-  display:flex;gap:8px 18px;flex-wrap:wrap}
+  display:flex;gap:8px 18px;flex-wrap:wrap;align-items:center}
+.dl{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11px;
+  letter-spacing:.04em;text-decoration:none;color:var(--brass);border:1px solid var(--brass);
+  padding:5px 11px;border-radius:2px;white-space:nowrap}
+.dl:hover{background:var(--brass);color:#fff}
+.card .dl{margin-top:11px;font-size:10.5px;padding:4px 9px}
 .verdict{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--brass);
   padding:19px 22px;margin:0 0 24px;font-size:15.5px;line-height:1.62}
 .verdict .lab{font-family:var(--mono);font-size:10px;letter-spacing:.11em;text-transform:uppercase;
@@ -258,7 +263,7 @@ footer{border-top:2px solid var(--ink);margin-top:50px;padding-top:15px;font-fam
 /* ========== researched briefs ========== */
 var LIB = [
 {
-  id:"au", kind:"researched",
+  id:"au", kind:"researched", pdf:"https://ccccsuper0828.github.io/sourcing-brief-generator/reports/australia-home-coffee-machines-sourcing-brief.pdf", pages:"26-page PDF",
   market:"Australia", category:"Home coffee machines",
   title:"Australia — Home Coffee Machines",
   blurb:"33 machines priced and rated, 201 full-text owner reviews mined, regulatory classification verified against the regulator's own filing.",
@@ -342,7 +347,7 @@ var LIB = [
   ]
 },
 {
-  id:"th", kind:"researched",
+  id:"th", kind:"researched", pdf:"https://ccccsuper0828.github.io/sourcing-brief-generator/reports/thailand-home-coffee-machines-sourcing-brief.pdf", pages:"20-page PDF",
   market:"Thailand", category:"Home coffee machines",
   title:"Thailand — Home Coffee Machines",
   blurb:"Researched as a direct comparison to Australia. The two markets turn out to be structurally opposite, and Thailand is the materially harder entry.",
@@ -472,6 +477,12 @@ function renderBrief(b){
   bh.appendChild(el("div","t", b.title || ((b.market||"") + " — " + (b.category||""))));
   var m = el("div","m");
   m.appendChild(el("span", null, b.meta || "Generated brief"));
+  if(b.pdf){
+    var dl = el("a","dl", "Download " + (b.pages || "PDF"));
+    dl.href = b.pdf;
+    dl.setAttribute("download","");
+    m.appendChild(dl);
+  }
   bh.appendChild(m);
   root.appendChild(bh);
 
@@ -617,15 +628,27 @@ function renderBrief(b){
 
 /* library cards */
 LIB.forEach(function(b){
-  var c = el("button","card");
-  c.type = "button";
+  var c = el("div","card");
+  c.setAttribute("role","button");
+  c.tabIndex = 0;
   c.appendChild(el("div","ct", b.title));
   c.appendChild(el("div","cd", b.blurb));
   c.appendChild(el("div","cm", b.meta));
-  c.addEventListener("click", function(){
+  if(b.pdf){
+    var cdl = el("a","dl", "Download " + (b.pages || "PDF"));
+    cdl.href = b.pdf;
+    cdl.setAttribute("download","");
+    cdl.addEventListener("click", function(e){ e.stopPropagation(); });
+    c.appendChild(cdl);
+  }
+  function openBrief(){
     Array.prototype.forEach.call(lib.children, function(n){ n.classList.remove("active"); });
     c.classList.add("active");
     renderBrief(b);
+  }
+  c.addEventListener("click", openBrief);
+  c.addEventListener("keydown", function(e){
+    if(e.key === "Enter" || e.key === " "){ e.preventDefault(); openBrief(); }
   });
   lib.appendChild(c);
 });
