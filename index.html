@@ -1,0 +1,749 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sourcing Brief Generator — Appliance Market Entry</title>
+<meta name="description" content="A research framework for consumer-appliance market entry and supplier qualification, with two fully researched market briefs.">
+</head>
+<body>
+<style>
+:root{
+  --bg:#EDEEF0; --surface:#FFFFFF; --surface-2:#F5F6F7; --surface-3:#E9EBED;
+  --line:#D5D8DC; --line-soft:#E4E7EA;
+  --ink:#14181B; --ink-2:#4C555C; --ink-3:#737E86; --ink-4:#9AA2A8;
+  --brass:#8F5520; --brass-2:#B4793C; --brass-wash:#F4EBE1;
+  --steel:#334650; --steel-2:#6E8794;
+  --good:#245C40; --good-bg:#DFEDE5;
+  --warn:#7E5510; --warn-bg:#F4EAD6;
+  --bad:#8C2F27;  --bad-bg:#F6E2E0;
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#101315; --surface:#191D20; --surface-2:#1F2428; --surface-3:#242A2F;
+    --line:#2E353A; --line-soft:#252B30;
+    --ink:#E7EAEC; --ink-2:#A8B2B9; --ink-3:#7C878E; --ink-4:#636E75;
+    --brass:#D08B4A; --brass-2:#B06F32; --brass-wash:#2A2017;
+    --steel:#8FA8B6; --steel-2:#5E7683;
+    --good:#6FBF93; --good-bg:#17291F;
+    --warn:#D6A54A; --warn-bg:#2A2214;
+    --bad:#E07A70;  --bad-bg:#2B1917;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#101315; --surface:#191D20; --surface-2:#1F2428; --surface-3:#242A2F;
+  --line:#2E353A; --line-soft:#252B30;
+  --ink:#E7EAEC; --ink-2:#A8B2B9; --ink-3:#7C878E; --ink-4:#636E75;
+  --brass:#D08B4A; --brass-2:#B06F32; --brass-wash:#2A2017;
+  --steel:#8FA8B6; --steel-2:#5E7683;
+  --good:#6FBF93; --good-bg:#17291F;
+  --warn:#D6A54A; --warn-bg:#2A2214;
+  --bad:#E07A70;  --bad-bg:#2B1917;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);
+  font-size:15.5px;line-height:1.65;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1060px;margin:0 auto;padding:0 22px 90px}
+button{font-family:inherit}
+:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+
+/* masthead */
+header.mast{border-bottom:2px solid var(--ink);padding:46px 0 18px;margin-bottom:30px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--brass);margin:0 0 15px;display:flex;flex-wrap:wrap;gap:8px 18px}
+h1{font-size:clamp(27px,4vw,40px);line-height:1.12;margin:0 0 14px;letter-spacing:-.022em;
+  font-weight:680;text-wrap:balance;max-width:20ch}
+.lede{font-size:17px;line-height:1.58;color:var(--ink-2);margin:0;max-width:64ch}
+
+h2{font-size:21px;margin:0 0 4px;letter-spacing:-.012em;font-weight:660;text-wrap:balance}
+.sub{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink-3);margin:0 0 20px}
+section{margin:0 0 50px}
+.rule{border-top:1px solid var(--line);padding-top:14px}
+
+/* ---- generator panel ---- */
+.panel{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--brass);
+  padding:24px 26px;margin:0 0 20px}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+@media(max-width:640px){.fields{grid-template-columns:1fr}}
+label{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink-3);margin-bottom:6px}
+input[type=text]{width:100%;padding:9px 11px;font-family:var(--sans);font-size:15px;
+  background:var(--surface-2);color:var(--ink);border:1px solid var(--line);border-radius:2px}
+input[type=text]::placeholder{color:var(--ink-4)}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.btn{padding:9px 18px;font-size:14.5px;font-weight:600;border-radius:2px;cursor:pointer;
+  border:1px solid var(--brass);background:var(--brass);color:#fff;letter-spacing:.01em}
+.btn:hover:not(:disabled){background:var(--brass-2);border-color:var(--brass-2)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--ink-2);border-color:var(--line)}
+.btn.ghost:hover:not(:disabled){border-color:var(--ink-3);color:var(--ink);background:transparent}
+.hint{font-size:13px;color:var(--ink-3);margin:12px 0 0;line-height:1.5}
+.chips{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.chipbtn{font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:2px;cursor:pointer;
+  border:1px solid var(--line);background:var(--surface-2);color:var(--ink-2)}
+.chipbtn:hover{border-color:var(--brass);color:var(--brass)}
+
+/* status */
+.status{display:none;align-items:center;gap:10px;margin-top:16px;padding:11px 14px;
+  background:var(--surface-2);border:1px solid var(--line-soft);font-size:14px;color:var(--ink-2)}
+.status.on{display:flex}
+.status.err{background:var(--bad-bg);border-color:var(--bad);color:var(--bad)}
+.spin{width:12px;height:12px;border:2px solid var(--line);border-top-color:var(--brass);
+  border-radius:50%;animation:sp .7s linear infinite;flex:none}
+@keyframes sp{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.spin{animation:none}}
+.raw{display:none;margin-top:14px;padding:12px 14px;background:var(--surface-2);
+  border:1px solid var(--line-soft);font-family:var(--mono);font-size:11.5px;line-height:1.55;
+  color:var(--ink-3);max-height:190px;overflow:auto;white-space:pre-wrap;word-break:break-word}
+.raw.on{display:block}
+
+/* provenance banner */
+.prov{display:flex;gap:11px;align-items:flex-start;padding:13px 16px;margin:0 0 20px;
+  border:1px solid var(--line);border-left:3px solid var(--steel);background:var(--surface);font-size:13.5px;
+  line-height:1.5;color:var(--ink-2)}
+.prov.draft{border-left-color:var(--warn)}
+.prov b{color:var(--ink)}
+.provtag{font-family:var(--mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;
+  padding:3px 8px;border-radius:2px;flex:none;margin-top:1px}
+.pt-res{background:var(--good-bg);color:var(--good)}
+.pt-draft{background:var(--warn-bg);color:var(--warn)}
+
+/* ---- brief rendering ---- */
+.brief{display:none}
+.brief.on{display:block}
+.bh{border-top:2px solid var(--ink);padding-top:16px;margin-bottom:22px}
+.bh .t{font-size:24px;font-weight:680;letter-spacing:-.016em;margin:0 0 6px;text-wrap:balance}
+.bh .m{font-family:var(--mono);font-size:11px;color:var(--ink-3);letter-spacing:.04em;
+  display:flex;gap:8px 18px;flex-wrap:wrap}
+.verdict{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--brass);
+  padding:19px 22px;margin:0 0 24px;font-size:15.5px;line-height:1.62}
+.verdict .lab{font-family:var(--mono);font-size:10px;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--brass);margin:0 0 7px}
+.verdict p{margin:0}
+
+.bsec{margin:0 0 26px}
+.bsec h3{font-size:12.5px;font-family:var(--mono);letter-spacing:.1em;text-transform:uppercase;
+  color:var(--brass);margin:0 0 11px;padding-bottom:7px;border-bottom:1px solid var(--line)}
+
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:1px;
+  background:var(--line);border:1px solid var(--line)}
+.stat{background:var(--surface);padding:15px 15px}
+.stat .n{font-family:var(--mono);font-size:19px;font-weight:620;letter-spacing:-.018em;
+  font-variant-numeric:tabular-nums;line-height:1.18;word-break:break-word}
+.stat .l{font-size:12.5px;color:var(--ink-2);margin-top:6px;line-height:1.42}
+.stat .s{font-family:var(--mono);font-size:10px;color:var(--ink-4);margin-top:6px;letter-spacing:.03em}
+
+.tw{overflow-x:auto;border:1px solid var(--line);background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:490px;font-size:13.5px}
+th{font-family:var(--mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--ink-3);text-align:left;padding:10px 13px;border-bottom:1px solid var(--line);
+  background:var(--surface-2);font-weight:500;white-space:nowrap}
+td{padding:9px 13px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+td.note{color:var(--ink-3);font-size:12.5px}
+
+.sev{display:inline-block;font-family:var(--mono);font-size:10px;letter-spacing:.07em;
+  text-transform:uppercase;padding:3px 8px;border-radius:2px}
+.sv-high{background:var(--bad-bg);color:var(--bad)}
+.sv-medium{background:var(--warn-bg);color:var(--warn)}
+.sv-low{background:var(--good-bg);color:var(--good)}
+
+.gate{border:1px solid var(--line);border-left:3px solid var(--bad);background:var(--surface);
+  padding:18px 21px}
+.gate .top{display:flex;gap:12px;align-items:baseline;flex-wrap:wrap;margin-bottom:9px}
+.gate .rg{font-weight:660;font-size:15.5px}
+.gate p{margin:0 0 9px;font-size:14.5px;line-height:1.56;color:var(--ink-2)}
+.gate p:last-child{margin-bottom:0}
+.gate ol{margin:10px 0 0;padding-left:19px;font-size:14px;color:var(--ink-2);line-height:1.55}
+.gate ol li{margin-bottom:4px}
+.gate ol li::marker{font-family:var(--mono);font-size:11px;color:var(--brass)}
+
+.sieves{display:grid;gap:1px;background:var(--line);border:1px solid var(--line)}
+.sieve{background:var(--surface);padding:19px 22px}
+.sieve .sh{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+.sieve .sn{font-family:var(--mono);font-size:10.5px;letter-spacing:.09em;color:var(--brass);white-space:nowrap}
+.sieve .st{font-weight:660;font-size:15.5px;flex:1;min-width:180px}
+.sieve .sw{font-size:14px;color:var(--ink-2);margin:0 0 11px;line-height:1.55}
+.qs{list-style:none;margin:0;padding:0;display:grid;gap:7px}
+.qs li{display:grid;grid-template-columns:auto 1fr;gap:10px;font-size:14px;line-height:1.52;color:var(--ink-2)}
+.qs li::before{content:"→";font-family:var(--mono);color:var(--brass);font-size:11.5px;padding-top:3px}
+.pf{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+.pfc{font-family:var(--mono);font-size:10.5px;padding:4px 9px;border-radius:2px}
+.pf-y{background:var(--good-bg);color:var(--good)}
+.pf-n{background:var(--bad-bg);color:var(--bad)}
+
+.verify{border:1px solid var(--line);border-left:3px solid var(--warn);background:var(--surface);
+  padding:17px 21px}
+.verify ul{margin:9px 0 0;padding-left:19px;font-size:14px;line-height:1.55;color:var(--ink-2)}
+.verify li{margin-bottom:5px}
+.verify .lab{font-family:var(--mono);font-size:10px;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--warn);margin:0}
+
+/* library */
+.lib{display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:1px;
+  background:var(--line);border:1px solid var(--line)}
+.card{background:var(--surface);padding:19px 21px;cursor:pointer;border:0;text-align:left;
+  font-family:inherit;color:inherit;display:block;width:100%}
+.card:hover{background:var(--surface-2)}
+.card .ct{font-size:16.5px;font-weight:660;margin:0 0 5px;letter-spacing:-.01em}
+.card .cd{font-size:13.5px;color:var(--ink-2);line-height:1.48;margin:0 0 11px}
+.card .cm{font-family:var(--mono);font-size:10px;color:var(--ink-4);letter-spacing:.04em}
+.card.active{background:var(--brass-wash)}
+.card.active .ct{color:var(--brass)}
+
+footer{border-top:2px solid var(--ink);margin-top:50px;padding-top:15px;font-family:var(--mono);
+  font-size:10.5px;color:var(--ink-3);letter-spacing:.04em;display:flex;
+  justify-content:space-between;flex-wrap:wrap;gap:9px}
+</style>
+
+<div class="wrap">
+
+<header class="mast">
+  <p class="eyebrow"><span>Appliance market entry</span><span>Supplier qualification</span></p>
+  <h1>Sourcing Brief Generator</h1>
+  <p class="lede">A research framework for entering a consumer-appliance market and narrowing the search for a contract manufacturer. Two fully researched briefs are built in. Run the same framework against any other market below.</p>
+</header>
+
+<section>
+  <div class="rule"><h2>Run the framework</h2></div>
+  <p class="sub">Market + category → structured brief</p>
+
+  <div class="panel">
+    <div class="fields">
+      <div>
+        <label for="mk">Target market</label>
+        <input type="text" id="mk" placeholder="e.g. Japan, Germany, Vietnam" autocomplete="off">
+      </div>
+      <div>
+        <label for="cat">Product category</label>
+        <input type="text" id="cat" placeholder="e.g. home coffee machines" autocomplete="off">
+      </div>
+    </div>
+    <div class="row">
+      <button class="btn" id="go">Generate brief</button>
+      <button class="btn ghost" id="stop" style="display:none">Stop</button>
+      <button class="btn ghost" id="toggleraw" style="display:none">Show raw output</button>
+    </div>
+    <div class="chips" id="presets"></div>
+    <p class="hint" id="hint">Generated briefs are drafted by Claude from general knowledge — no live web access. They are a structured starting point for your own research, not verified findings. The two briefs in the library below were researched from primary sources and are marked differently.</p>
+    <div class="status" id="status"></div>
+    <div class="raw" id="raw"></div>
+  </div>
+</section>
+
+<section>
+  <div class="rule"><h2>Brief library</h2></div>
+  <p class="sub">Researched from primary sources · click to read</p>
+  <div class="lib" id="lib"></div>
+</section>
+
+<div id="out"></div>
+
+<footer>
+  <span>Sourcing Brief Generator</span>
+  <span id="fnote">Framework v2 · built from the Australia study</span>
+</footer>
+
+</div>
+
+<script>
+(function(){
+"use strict";
+
+/* ========== researched briefs ========== */
+var LIB = [
+{
+  id:"au", kind:"researched",
+  market:"Australia", category:"Home coffee machines",
+  title:"Australia — Home Coffee Machines",
+  blurb:"33 machines priced and rated, 201 full-text owner reviews mined, regulatory classification verified against the regulator's own filing.",
+  meta:"Researched 20 Oct 2026 · 3,385 reviews · 26-page report",
+  currency:"A$",
+  verdict:"Demand is not the binding constraint — execution is. The A$450–1,000 band holds the average transaction value (A$578) and the widest quality variance (ratings 2.8 to 4.7), so it is the only band where disciplined execution can take share. Two filters decide the factory: coffee machines are EESS Risk Level 3, the highest tier, requiring third-party certification rather than self-declaration; and comparative review analysis shows water sealing, not the grinder, is what separates a 3.2-star machine from a 4.1-star one.",
+  fundamentals:[
+    {n:"A$578",l:"Average paid for a bean or ground machine",s:"Canstar Sep 2026 · n=680"},
+    {n:"A$296",l:"Average paid for a pod machine",s:"Same survey"},
+    {n:"+22%",l:"Home espresso machine sales growth YoY",s:"2024 → 2025"},
+    {n:"65%",l:"Households owning a machine (48% pod, 20% automatic)",s:"Industry survey"},
+    {n:"72%",l:"Buyers who still buy café coffee — not economising",s:"Canstar Sep 2026"},
+    {n:"5.83%",l:"Market CAGR, USD 210M → 295M by 2031",s:"Industry forecast"}
+  ],
+  bands:[
+    {b:"Under A$300",r:"Entry & capsule",k:"48% household pod penetration; Nespresso-compatible systems hold 82%. Closed to new entrants."},
+    {b:"A$300–1,000",r:"The contested middle",k:"Average transaction lands here. Ratings range 2.8–4.7 — no incumbent holds a quality moat. The target band."},
+    {b:"Above A$1,000",r:"Premium",k:"Jura and Breville flagships. Brand equity, and even they score only 3.6–4.2."}
+  ],
+  reg:{
+    regime:"EESS Risk Level 3 · AS/NZS 60335.2.15",
+    severity:"high",
+    gate:"Coffee machines classify as a \"liquid heating appliance\" at the highest risk tier. Self-declaration is not permitted — a Certificate of Conformity from a recognised body is mandatory. Verified by reading the regulator's classification table directly.",
+    holder:"The Responsible Supplier must be a local entity holding an Australian ABN. The foreign factory cannot register, and legal liability sits with the Australian entity, not the manufacturer.",
+    steps:[
+      "Testing to AS/NZS 60335.1 and 60335.2.15 at an accredited laboratory",
+      "Certificate of Conformity from a recognised RECS body, listed on the national register",
+      "Responsible Supplier registration — A$239.74/year, Australian ABN required",
+      "Equipment registration per model — A$89.85 (1yr) to A$449.25 (5yr)",
+      "RCM marking per AS/NZS 4417.1, plus AS/NZS 3112 plug and 230V/50Hz"
+    ]
+  },
+  cost:[
+    ["FOB factory price","USD 130 at 0.65 USD/AUD","200"],
+    ["Sea freight and insurance","FCL, amortised","18"],
+    ["Import duty","0% under ChAFTA with Certificate of Origin","0"],
+    ["GST","10%, recoverable once registered","0"],
+    ["Certification amortisation","Over a 1,000-unit first run","12"],
+    ["Warehousing and last-mile","Domestic","25"],
+    ["Warranty and returns reserve","6%; model 8–10% for an unproven factory","33"],
+    ["Total landed cost","","288"],
+    ["Indicative retail","Benchmarked to a 4.7-rated competitor at A$477","549"]
+  ],
+  sieves:[
+    {n:"Filter 1",t:"Australian certification capability",c:"expect >80% eliminated",
+     w:"Ask before discussing price. Most factories hold only CE and Chinese GB4706, and originating Level 3 approval changes the project economics.",
+     q:["Do you hold a Certificate of Conformity to AS/NZS 60335.2.15? Give the number — verify it yourself on the EESS public register, never accept a PDF.",
+        "If not, do you hold an IEC 60335-2-15 CB Test Report? Conversion is far cheaper than originating.",
+        "Are you shipping to Australia or New Zealand now? To whom, which model, who holds the certificate?",
+        "Who funds certification and who owns the certificate? Ownership decides whether you can change factories later."],
+     y:"Holds AU/NZ certificate → shortlist", nn:"CE or GB only → eliminate"},
+    {n:"Filter 2",t:"Product format alignment",c:"category lock",
+     w:"The evidence supports one configuration: integrated-grinder semi-automatic, A$450–800 retail, metal-bodied, features deliberately subtracted.",
+     q:["Exclude capsules — patent and consumable lock-in, no viable entry.",
+        "Exclude fully automatic — Jura and DeLonghi hold the band and still only score 3.8.",
+        "Target: 15–20 bar pump, integrated adjustable conical burr, real steam wand, stainless front, 54/58mm portafilter.",
+        "Buy the two benchmark machines and put them on the factory's bench for teardown."],
+     y:"Integrated-grinder semi-auto", nn:"Capsule or super-automatic"},
+    {n:"Filter 3",t:"Resistance to the real failure modes",c:"determines return rate",
+     w:"Leak complaints run 7.3× higher in the worst machine than the benchmark; grinder complaints run equal in both. Sealing is the gap; the grinder is an unsolved category-wide problem and therefore the differentiation opportunity.",
+     q:["Sealing — which seals at the steam wand and thermoblock, what material, which supplier, what pressure-cycle count? Request the protocol, not an assurance.",
+        "Pump — Italian Ulka or Ceme is the reference. Unbranded pumps drive both noise and leaks. Specify it contractually.",
+        "Thermoblock or boiler, and material? Owners specifically call out 'plastic parts against brass'.",
+        "Steam pressure and dryness data, with a timed milk-texturing demonstration. A veto criterion in a flat-white market.",
+        "Grinder — burr type, material, retention per dose, anti-static treatment, measured choke rate.",
+        "Documentation: ageing test reports, batch defect rates, 12 months of return rates."],
+     y:"Answers with test protocols", nn:"Cannot answer — trading intermediary"},
+    {n:"Filter 4",t:"After-sales and spare parts",c:"determines year-two survival",
+     w:"Statutory guarantees run to the product's reasonable life, not the stated warranty. This is a financial question, not a service one.",
+     q:["Wear-parts schedule and guaranteed supply term, contractually recorded.",
+        "Defect liability — who bears batch defects, what evidence standard, what ceiling.",
+        "Local repair support: service manuals, exploded diagrams, a parts channel that avoids a China round trip.",
+        "First order can be small — published MOQs go as low as 50 units for grinder-equipped machines."],
+     y:"Written parts commitment", nn:"No spare parts channel"}
+  ],
+  verify:[
+    "Brand reliability percentages cited from CHOICE derive from a 2019 survey — the failure modes still hold, the percentages are stale.",
+    "The review text analysis measures topic salience, not verified failure rate; it also counts positive mentions.",
+    "Review-platform ratings are self-selected and valid only for relative comparison within one platform.",
+    "Cost figures are indicative, built on published quotation ranges and a stated FX assumption."
+  ]
+},
+{
+  id:"th", kind:"researched",
+  market:"Thailand", category:"Home coffee machines",
+  title:"Thailand — Home Coffee Machines",
+  blurb:"Researched as a direct comparison to Australia. The two markets turn out to be structurally opposite, and Thailand is the materially harder entry.",
+  meta:"Researched 25 Oct 2026 · regulator + retail + channel data",
+  currency:"฿",
+  verdict:"Thailand looks attractive on coffee-culture metrics and is not. Consumption nearly doubled to 340 cups per person per year, but machine-market value grows at only 2.92% a year — volume is rising while value is not. The mid-market is already served by Thai brands at prices at or below the FOB cost of a comparable imported machine: Duchess ships a 58mm, 20-bar machine at ฿3,990 (≈US$115). On top of that, TISI requires an on-site audit of the Chinese factory and the licence can only be held by a Thai-registered entity. Harder gate, thinner margin, slower value growth. Enter only with a genuine cost advantage or a defensible niche — not as a second market chosen for similarity.",
+  fundamentals:[
+    {n:"USD 95M",l:"Coffee machine market value",s:"Five-year historical base"},
+    {n:"2.92%",l:"Market CAGR to 2031 — half Australia's rate",s:"+USD 7.2M by 2031"},
+    {n:"340",l:"Cups per person per year, up from 180",s:"Consumption nearly doubled"},
+    {n:"฿65bn",l:"Domestic coffee market value",s:"2025"},
+    {n:"33%",l:"TikTok Shop share of e-commerce — the channel is social",s:"Shopee ~48%, Lazada ~18%"},
+    {n:"34.3%",l:"Household appliance revenue transacted online",s:"Online CAGR 7.9%"}
+  ],
+  bands:[
+    {b:"฿1,500–3,000",r:"Mass entry",k:"Worldtech 3-in-1 semi-auto at ฿1,934. Thin-margin volume play dominated by local and Chinese white-label brands."},
+    {b:"฿3,000–7,000",r:"Where the market actually is",k:"Duchess CM5810B — 58mm portafilter, 20 bar — at ฿3,990. Nespresso Essenza Mini ฿6,600, Pixie ฿7,100. A Thai brand already delivers the Australian target spec here at roughly its FOB cost."},
+    {b:"Above ฿15,000",r:"Imported premium",k:"Breville Bambino at ฿18,000. Real margin exists but the addressable base is small relative to Australia."}
+  ],
+  reg:{
+    regime:"TIS 1375-2563 · modified from IEC 60335-1 Ed 5.2",
+    severity:"high",
+    gate:"Thailand regulates by a general mandatory standard rather than a product-specific risk class. TIS 1375-2563 covers household electrical appliances rated ≤250V single-phase and has been mandatory since 25 November 2020 — a domestic coffee machine sits squarely in scope. There are 136 mandatory product categories as of 2025.",
+    holder:"A foreign manufacturer cannot hold the licence. A Thai-registered company must be appointed as local representative and certificate holder. Critically, factory inspection is mandatory and takes place at the production facility wherever it is — a TISI-authorised body audits the Chinese plant on site for one to three days.",
+    steps:[
+      "Appoint a Thai-registered entity as licence holder — this cannot be the foreign factory",
+      "Submit application and documentation; sample testing at an approved laboratory (30–60 days)",
+      "On-site TISI factory inspection at the Chinese plant, 1–3 days",
+      "TISI technical review and licence issue — 8–12 weeks typical, 3–6 months if complex",
+      "TIS mark on product and packaging plus Thai-language labelling before sale",
+      "220V/50Hz; TIS 166-2549 plug standard (Type O)"
+    ]
+  },
+  cost:[
+    ["FOB factory price","USD 115 at ~34.5 THB/USD","3,970"],
+    ["Sea freight and insurance","Short lane from China","240"],
+    ["Import duty","0% under ACFTA with Form E","0"],
+    ["VAT","7%, recoverable for registered operators","0"],
+    ["Certification amortisation","Incl. factory audit, over a 1,000-unit run","420"],
+    ["Warehousing and domestic delivery","Thailand","320"],
+    ["Platform commission and returns","Marketplace-led channel","640"],
+    ["Total landed cost","","5,590"],
+    ["Competing Thai retail price","Duchess CM5810B, comparable spec","3,990"]
+  ],
+  sieves:[
+    {n:"Filter 1",t:"Will the factory host a TISI audit?",c:"expect >85% eliminated",
+     w:"This is the sharpest filter and has no Australian equivalent. Australia accepts document-based certification; Thailand sends inspectors to the Chinese plant. Many factories will not or cannot accommodate this.",
+     q:["Have you hosted a TISI factory inspection before? For which licence holder, and when?",
+        "Will you accept an on-site audit by a TISI-authorised body, 1–3 days, at your cost or shared?",
+        "Do you hold any current TIS licence association, and under which Thai importer?",
+        "Can you supply TIS 1375-2563 test evidence, or an IEC 60335-1 CB report to build from?"],
+     y:"Has hosted a TISI audit → shortlist", nn:"Will not host inspection → eliminate"},
+    {n:"Filter 2",t:"Can you beat ฿3,990 at a comparable spec?",c:"margin reality check",
+     w:"A Thai brand already sells a 58mm, 20-bar machine at roughly the landed cost of an imported equivalent. Entering mid-market means competing below your own cost base — the arithmetic has to be confronted before anything else.",
+     q:["What is your true FOB at the volume you can actually commit to in year one?",
+        "Does the business case survive if retail must sit at or below ฿4,500?",
+        "If not, is there a defensible position above ฿15,000 where imported brands hold margin?",
+        "Is there a specification Thai incumbents do not offer that buyers will pay for?"],
+     y:"Clear cost or spec advantage", nn:"Undifferentiated mid-market entry"},
+    {n:"Filter 3",t:"Build quality for a humid, hard-water market",c:"determines return rate",
+     w:"The engineering questions from the Australian study transfer directly, with two local additions: Thailand's humidity and water hardness load the sealing and scaling failure modes harder than Australia does.",
+     q:["Sealing specification at steam wand and thermoblock — material, supplier, pressure-cycle count.",
+        "Pump brand — specify Ulka or Ceme contractually rather than accepting 'equivalent'.",
+        "Corrosion and humidity testing evidence; salt-spray and damp-heat results.",
+        "Descaling design and indicator logic given local water hardness.",
+        "Batch defect rates and 12 months of return data."],
+     y:"Supplies humidity and cycle test data", nn:"No environmental test evidence"},
+    {n:"Filter 4",t:"Marketplace and content readiness",c:"channel fit",
+     w:"Shopee, TikTok Shop and Lazada account for over 98% of Thai e-commerce, and TikTok Shop alone is a third. This is a live-selling and creator-affiliate market, not a retail-chain market — a different operating model from Australia.",
+     q:["Can the factory support frequent short-run SKU and colourway variation for content?",
+        "Packaging suitable for marketplace fulfilment and unboxing video?",
+        "Will they supply product footage, exploded diagrams and spec assets for creator briefs?",
+        "Reorder lead time short enough to chase a live-selling spike?"],
+     y:"Flexible short runs", nn:"Rigid high-MOQ only"}
+  ],
+  verify:[
+    "Confirm directly with TISI or a licensed agent that your specific model falls under TIS 1375-2563 and whether any product-specific standard also applies — scope should never be assumed from a general standard.",
+    "Retail prices are captured from marketplace listings that carry heavy and frequent coupon discounting; list price and transacted price differ materially in Thailand.",
+    "The landed cost model uses an assumed FX rate and an assumed certification cost including factory audit — obtain a real quotation, as the audit is a significant and variable line.",
+    "Market CAGR figures come from a single commercial forecast and were not cross-validated against a second source.",
+    "Unlike the Australia brief, no owner-review corpus was mined for Thailand — failure-mode priorities are carried over from the Australian analysis and should be re-tested locally."
+  ]
+}
+];
+
+/* ========== rendering ========== */
+var $ = function(s){ return document.querySelector(s); };
+var out = $("#out"), lib = $("#lib"), statusEl = $("#status"), rawEl = $("#raw");
+
+function el(tag, cls, txt){
+  var n = document.createElement(tag);
+  if(cls) n.className = cls;
+  if(txt !== undefined && txt !== null) n.textContent = String(txt);
+  return n;
+}
+function arr(v){ return Array.isArray(v) ? v : []; }
+function str(v){ return (v === undefined || v === null) ? "" : String(v); }
+
+function renderBrief(b){
+  out.innerHTML = "";
+  var root = el("div","brief on");
+
+  // provenance
+  var researched = b.kind === "researched";
+  var prov = el("div","prov" + (researched ? "" : " draft"));
+  var tag = el("span","provtag " + (researched ? "pt-res" : "pt-draft"),
+                researched ? "Researched" : "AI draft");
+  prov.appendChild(tag);
+  var pw = el("div");
+  if(researched){
+    pw.innerHTML = "";
+    var b1 = el("b","Researched from primary sources. ");
+    pw.appendChild(b1);
+    pw.appendChild(document.createTextNode(
+      "Figures were collected from named sources and the regulatory classification was verified against the regulator's own publication. Known limitations are listed at the end."));
+  } else {
+    var b2 = el("b","Drafted by Claude from general knowledge — not verified. ");
+    pw.appendChild(b2);
+    pw.appendChild(document.createTextNode(
+      "This page has no live web access, so every figure here is a recollection that may be wrong, out of date, or invented. Treat it as a structured starting point and a list of questions to go and answer — never as findings. The checklist at the end names what to verify first."));
+  }
+  prov.appendChild(pw);
+  root.appendChild(prov);
+
+  // header
+  var bh = el("div","bh");
+  bh.appendChild(el("div","t", b.title || ((b.market||"") + " — " + (b.category||""))));
+  var m = el("div","m");
+  m.appendChild(el("span", null, b.meta || "Generated brief"));
+  bh.appendChild(m);
+  root.appendChild(bh);
+
+  // verdict
+  if(b.verdict){
+    var v = el("div","verdict");
+    v.appendChild(el("p","lab","The verdict"));
+    v.appendChild(el("p", null, b.verdict));
+    root.appendChild(v);
+  }
+
+  // fundamentals
+  var f = arr(b.fundamentals);
+  if(f.length){
+    var s1 = el("div","bsec");
+    s1.appendChild(el("h3", null, "Market fundamentals"));
+    var grid = el("div","stats");
+    f.forEach(function(x){
+      var c = el("div","stat");
+      c.appendChild(el("div","n", str(x.n)));
+      c.appendChild(el("div","l", str(x.l)));
+      if(x.s) c.appendChild(el("div","s", str(x.s)));
+      grid.appendChild(c);
+    });
+    s1.appendChild(grid);
+    root.appendChild(s1);
+  }
+
+  // price bands
+  var bands = arr(b.bands);
+  if(bands.length){
+    var s2 = el("div","bsec");
+    s2.appendChild(el("h3", null, "Price bands"));
+    var tw = el("div","tw"), t = el("table");
+    var th = el("thead"), hr = el("tr");
+    ["Band","Segment","Read"].forEach(function(h){ hr.appendChild(el("th",null,h)); });
+    th.appendChild(hr); t.appendChild(th);
+    var tb = el("tbody");
+    bands.forEach(function(x){
+      var tr = el("tr");
+      tr.appendChild(el("td","num", str(x.b)));
+      tr.appendChild(el("td", null, str(x.r)));
+      tr.appendChild(el("td","note", str(x.k)));
+      tb.appendChild(tr);
+    });
+    t.appendChild(tb); tw.appendChild(t); s2.appendChild(tw);
+    root.appendChild(s2);
+  }
+
+  // regulatory
+  if(b.reg){
+    var s3 = el("div","bsec");
+    s3.appendChild(el("h3", null, "The regulatory gate"));
+    var g = el("div","gate");
+    var top = el("div","top");
+    top.appendChild(el("span","rg", str(b.reg.regime)));
+    var sv = str(b.reg.severity).toLowerCase();
+    if(sv) top.appendChild(el("span","sev sv-" + (sv==="high"?"high":sv==="low"?"low":"medium"),
+                              sv + " barrier"));
+    g.appendChild(top);
+    if(b.reg.gate) g.appendChild(el("p", null, str(b.reg.gate)));
+    if(b.reg.holder) g.appendChild(el("p", null, str(b.reg.holder)));
+    var steps = arr(b.reg.steps);
+    if(steps.length){
+      var ol = el("ol");
+      steps.forEach(function(x){ ol.appendChild(el("li", null, str(x))); });
+      g.appendChild(ol);
+    }
+    s3.appendChild(g);
+    root.appendChild(s3);
+  }
+
+  // cost
+  var cost = arr(b.cost);
+  if(cost.length){
+    var s4 = el("div","bsec");
+    s4.appendChild(el("h3", null, "Indicative landed cost" + (b.currency ? " (" + b.currency + " per unit)" : "")));
+    var tw2 = el("div","tw"), t2 = el("table");
+    var th2 = el("thead"), hr2 = el("tr");
+    ["Line item","Basis", (b.currency||"") + " per unit"].forEach(function(h){ hr2.appendChild(el("th",null,h)); });
+    th2.appendChild(hr2); t2.appendChild(th2);
+    var tb2 = el("tbody");
+    cost.forEach(function(r){
+      var row = arr(r), tr = el("tr");
+      tr.appendChild(el("td", null, str(row[0])));
+      tr.appendChild(el("td","note", str(row[1])));
+      tr.appendChild(el("td","num", str(row[2])));
+      tb2.appendChild(tr);
+    });
+    t2.appendChild(tb2); tw2.appendChild(t2); s4.appendChild(tw2);
+    root.appendChild(s4);
+  }
+
+  // sieves
+  var sv2 = arr(b.sieves);
+  if(sv2.length){
+    var s5 = el("div","bsec");
+    s5.appendChild(el("h3", null, "Supplier qualification filters"));
+    var box = el("div","sieves");
+    sv2.forEach(function(x){
+      var d = el("div","sieve");
+      var sh = el("div","sh");
+      sh.appendChild(el("span","sn", str(x.n)));
+      sh.appendChild(el("span","st", str(x.t)));
+      if(x.c) sh.appendChild(el("span","sn", str(x.c)));
+      d.appendChild(sh);
+      if(x.w) d.appendChild(el("p","sw", str(x.w)));
+      var qs = arr(x.q);
+      if(qs.length){
+        var ul = el("ul","qs");
+        qs.forEach(function(q){ ul.appendChild(el("li", null, str(q))); });
+        d.appendChild(ul);
+      }
+      if(x.y || x.nn){
+        var pf = el("div","pf");
+        if(x.y) pf.appendChild(el("span","pfc pf-y", str(x.y)));
+        if(x.nn) pf.appendChild(el("span","pfc pf-n", str(x.nn)));
+        d.appendChild(pf);
+      }
+      box.appendChild(d);
+    });
+    s5.appendChild(box);
+    root.appendChild(s5);
+  }
+
+  // verify
+  var vf = arr(b.verify);
+  if(vf.length){
+    var s6 = el("div","bsec");
+    s6.appendChild(el("h3", null, researched ? "Limitations" : "Verify before acting"));
+    var vbox = el("div","verify");
+    vbox.appendChild(el("p","lab", researched ? "Known limitations of this research" : "Nothing below is confirmed"));
+    var ul2 = el("ul");
+    vf.forEach(function(x){ ul2.appendChild(el("li", null, str(x))); });
+    vbox.appendChild(ul2);
+    s6.appendChild(vbox);
+    root.appendChild(s6);
+  }
+
+  out.appendChild(root);
+  root.scrollIntoView({behavior:"smooth", block:"start"});
+}
+
+/* library cards */
+LIB.forEach(function(b){
+  var c = el("button","card");
+  c.type = "button";
+  c.appendChild(el("div","ct", b.title));
+  c.appendChild(el("div","cd", b.blurb));
+  c.appendChild(el("div","cm", b.meta));
+  c.addEventListener("click", function(){
+    Array.prototype.forEach.call(lib.children, function(n){ n.classList.remove("active"); });
+    c.classList.add("active");
+    renderBrief(b);
+  });
+  lib.appendChild(c);
+});
+
+/* presets */
+["Japan","Germany","Vietnam","United Kingdom","Indonesia"].forEach(function(mk){
+  var b = el("button","chipbtn", mk);
+  b.type = "button";
+  b.addEventListener("click", function(){
+    $("#mk").value = mk;
+    if(!$("#cat").value) $("#cat").value = "home coffee machines";
+  });
+  $("#presets").appendChild(b);
+});
+
+/* ========== generation backend ========== */
+var goBtn = $("#go"), stopBtn = $("#stop"), rawBtn = $("#toggleraw");
+var API = (window.__BRIEF_API__ || "/api/generate");
+var ctl = null;
+
+function setStatus(msg, isErr){
+  statusEl.className = "status on" + (isErr ? " err" : "");
+  statusEl.innerHTML = "";
+  if(!isErr) statusEl.appendChild(el("span","spin"));
+  statusEl.appendChild(el("span", null, msg));
+}
+function clearStatus(){ statusEl.className = "status"; statusEl.innerHTML = ""; }
+
+function parseLoose(txt){
+  if(!txt) return null;
+  try { return JSON.parse(txt); } catch(e){}
+  var fence = txt.match(/```(?:json)?\s*([\s\S]*?)```/);
+  if(fence){ try { return JSON.parse(fence[1]); } catch(e){} }
+  var a = txt.indexOf("{"), b = txt.lastIndexOf("}");
+  if(a >= 0 && b > a){ try { return JSON.parse(txt.slice(a, b+1)); } catch(e){} }
+  return null;
+}
+
+function run(){
+  var market = $("#mk").value.trim();
+  var cat = $("#cat").value.trim() || "home coffee machines";
+  if(!market){ setStatus("Enter a target market first.", true); return; }
+  if(market.length > 80 || cat.length > 80){ setStatus("Keep the market and category short.", true); return; }
+
+  ctl = new AbortController();
+  goBtn.disabled = true;
+  stopBtn.style.display = "";
+  rawBtn.style.display = "none";
+  rawEl.className = "raw";
+  rawEl.textContent = "";
+  setStatus("Thinking — a full brief usually takes 30–90 seconds…");
+
+  fetch(API, {
+    method:"POST",
+    headers:{"content-type":"application/json"},
+    body: JSON.stringify({market:market, category:cat}),
+    signal: ctl.signal
+  }).then(function(res){
+    if(!res.ok){
+      return res.text().then(function(t){
+        var m = "";
+        try { m = (JSON.parse(t).error) || ""; } catch(e){ m = ""; }
+        if(res.status === 429) throw new Error(m || "Too many requests right now. Try again in a little while.");
+        if(res.status === 503) throw new Error(m || "Generation isn't configured on this deployment yet.");
+        throw new Error(m || ("Request failed (" + res.status + ")."));
+      });
+    }
+    if(!res.body || !res.body.getReader){
+      return res.text().then(function(t){ return t; });
+    }
+    var reader = res.body.getReader(), dec = new TextDecoder(), acc = "";
+    function pump(){
+      return reader.read().then(function(r){
+        if(r.done) return acc;
+        acc += dec.decode(r.value, {stream:true});
+        rawEl.textContent = acc;
+        setStatus("Writing the brief… " + acc.length.toLocaleString() + " characters so far");
+        return pump();
+      });
+    }
+    return pump();
+  }).then(function(text){
+    goBtn.disabled = false;
+    stopBtn.style.display = "none";
+    var data = parseLoose(text);
+    if(!data || typeof data !== "object" || Array.isArray(data)){
+      setStatus("The reply came back malformed. Try again, or use a simpler market name.", true);
+      rawEl.textContent = text || "";
+      rawBtn.style.display = "";
+      return;
+    }
+    clearStatus();
+    rawBtn.style.display = "";
+    data.kind = "draft";
+    if(!data.title) data.title = market + " — " + cat;
+    if(!data.meta) data.meta = "AI draft · no live data";
+    Array.prototype.forEach.call(lib.children, function(n){ n.classList.remove("active"); });
+    renderBrief(data);
+  }).catch(function(e){
+    goBtn.disabled = false;
+    stopBtn.style.display = "none";
+    if(e && e.name === "AbortError"){ clearStatus(); return; }
+    setStatus((e && e.message) || "Something went wrong generating the brief.", true);
+  });
+}
+
+goBtn.addEventListener("click", run);
+stopBtn.addEventListener("click", function(){ if(ctl) ctl.abort(); });
+rawBtn.addEventListener("click", function(){
+  var on = rawEl.classList.toggle("on");
+  rawBtn.textContent = on ? "Hide raw output" : "Show raw output";
+});
+$("#mk").addEventListener("keydown", function(e){ if(e.key === "Enter") run(); });
+$("#cat").addEventListener("keydown", function(e){ if(e.key === "Enter") run(); });
+
+if(lib.firstChild){ lib.firstChild.classList.add("active"); renderBrief(LIB[0]); }
+
+})();
+</script>
+
+</body>
+</html>
